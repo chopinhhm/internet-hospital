@@ -1,0 +1,23 @@
+package com.hospital.websocket;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.socket.config.annotation.*;
+
+/**
+ * WebSocket 配置类
+ * 注册聊天室端点和握手拦截器
+ */
+@Configuration
+@EnableWebSocket
+@RequiredArgsConstructor
+public class WebSocketConfig implements WebSocketConfigurer {
+
+    private final ChatWebSocketHandler chatWebSocketHandler;
+
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(chatWebSocketHandler, "/ws/chat")
+                .setAllowedOrigins("*");
+    }
+}
