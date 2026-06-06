@@ -1,61 +1,59 @@
-# 互联网医院线上问诊系统
+<div align="center">
 
-> 基于 Spring Boot + WebSocket 的医患实时通讯问诊系统，支持图文问诊、排班调度、订单管理
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0D1117&height=150&section=header&text=%E4%BA%92%E8%81%94%E7%BD%91%E5%8C%BB%E9%99%A2%E9%97%AE%E8%AF%8A%E7%B3%BB%E7%BB%9F&fontSize=36&fontColor=58A6FF&animation=fadeIn" />
 
-## 项目简介
+[![WebSocket](https://img.shields.io/badge/WebSocket-010101?style=flat-square)]()
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white)]()
+[![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white)]()
+[![JWT](https://img.shields.io/badge/JWT-black?style=flat-square)]()
 
-为重医附院打造的互联网医院线上问诊平台，实现了医患实时通讯、排班调度、订单管理等核心功能。采用自研 WebSocket 深度业务耦合聊天室，支持多房间并发通信。
+</div>
 
-## 技术栈
+---
 
-| 技术 | 说明 |
-|------|------|
-| Spring Boot | 核心框架 |
-| Spring WebSocket | 自研深度业务耦合聊天室 |
-| Spring Security + JWT | 认证鉴权 |
-| Redis | 二级缓存架构 |
-| MySQL | 数据持久化 |
-| RabbitMQ | 异步消息（消息通知、超时处理） |
+## ✨ Features
 
-## 核心亮点
+- 🔌 **自研 WebSocket 聊天室** — 深度耦合医疗业务，多房间并发通信
+- 🔄 **HTTP 降级方案** — WebSocket 主协议 + 轮询兜底
+- ⚙️ **状态机订单调度** — PENDING → ACCEPTED → IN_PROGRESS → COMPLETED
+- 💾 **二级缓存加速** — Redis 会话缓存 + MySQL 全量持久化
+- 🔒 **JWT 安全认证** — Spring Security + Token 鉴权
 
-- **自研 WebSocket 聊天室**：深度耦合医疗问诊业务，支持消息类型区分（文本/图片/处方）
-- **WebSocket + HTTP 降级**：主协议 WebSocket，HTTP 轮询作为降级方案
-- **轻量级状态机**：订单调度流程控制（待接诊 → 问诊中 → 已结束）
-- **Redis 二级缓存**：会话信息缓存，减少数据库查询
-- **数据闭环**：所有业务数据全量持久化至 MySQL
+---
 
-## 模块说明
+## 🏗️ System Design
 
 ```
-internet-hospital/
-├── src/main/java/com/hospital/
-│   ├── HospitalApplication.java      # 启动类
-│   ├── controller/
-│   │   ├── ChatController.java       # 问诊聊天接口
-│   │   ├── ScheduleController.java   # 排班管理
-│   │   └── OrderController.java      # 订单管理
-│   ├── websocket/
-│   │   ├── ChatWebSocketHandler.java # WebSocket 核心处理器
-│   │   └── WebSocketConfig.java     # WebSocket 配置
-│   ├── service/
-│   │   ├── ChatService.java          # 聊天服务
-│   │   ├── ScheduleService.java     # 排班服务
-│   │   └── OrderService.java         # 订单服务
-│   ├── config/
-│   │   ├── RedisConfig.java
-│   │   └── SecurityConfig.java
-│   └── model/
-│       ├── entity/
-│       └── dto/
+┌──────────┐     WebSocket      ┌──────────────┐
+│  Patient │◄──────────────────►│  Chat Room   │
+│  Client  │     HTTP Fallback  │  (Handler)   │
+└──────────┘                    └──────┬───────┘
+                                        │
+                               ┌────────▼────────┐
+                               │  Order Service   │
+                               │  (State Machine) │
+                               └────────┬────────┘
+                                        │
+                              ┌─────────┼─────────┐
+                              ▼         ▼         ▼
+                           ┌──────┐ ┌──────┐ ┌────────┐
+                           │ Redis│ │ MySQL│ │RabbitMQ│
+                           │Cache │ │ DB   │ │Notify  │
+                           └──────┘ └──────┘ └────────┘
 ```
 
-## 快速开始
+---
 
-1. 执行 `sql/init.sql` 初始化数据库
-2. 修改 `application.yml` 配置
-3. 启动 HospitalApplication
+## 🚀 Quick Start
 
-## 许可证
+\`\`\`bash
+git clone https://github.com/chopinhhm/internet-hospital.git
+cd internet-hospital
+mvn spring-boot:run
+\`\`\`
 
-MIT License
+---
+
+## 📄 License
+
+MIT © [chopinhhm](https://github.com/chopinhhm)
